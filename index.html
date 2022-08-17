@@ -28,90 +28,115 @@
         style="background-color: black; 
         position: absolute; 
         top: 0; right: 0; bottom: 0; left: 0; opacity: 0; 
-        pointer-events: none;">
-    </div>
-
-    <div style="background-color:white; 
-        position:absolute; 
-        width:300px; 
-        border: 4px black solid;
-        top: 50px;
-        left: 50px;
-        padding: 12px;">
-        <h1 style="font-size: 16px;">Draggle</h1>
-        <div style="position: relative;">
-            <div style="height:5px; 
-                background-color:#ccc; 
-                margin-top:10px;">
-            </div>
-            <div  id="enemyHealthBar" 
-                style="height:5px; 
-                background-color:green; 
-                position: absolute; 
-                top: 0; 
-                left: 0; 
-                right: 0;">
-            </div>
-        </div>
-    </div>
-
-    <div style="background-color:white; 
-        position:absolute; 
-        width:300px; 
-        border: 4px black solid;
-        top: 330px;
-        right: 50px;
-        padding: 12px;">
-        <h1 style="font-size: 16px;">Emby</h1>
-        <div style="position: relative;">
-            <div style="height:5px; 
-                background-color:#ccc; 
-                margin-top:10px;">
-            </div>
-            <div id="myHealthBar"
-                style="height:5px; 
-                background-color:green; 
-                position: absolute; 
-                top: 0; 
-                left: 0; 
-                right: 0;">
-            </div>
-        </div>
+        pointer-events: none;
+        z-index: 10;">
     </div>
 
     <canvas></canvas>
 
-    <div style="background-color: white; 
-        position: absolute;
-        height: 140px;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border-top: 4px black solid;
-        display: flex;">
-        <div style="width: 66.66%; 
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);">
-                <button>Attacco</button>
-                <button>Incendio</button>
+    <div id="battleUserInterface"
+        style="display:none;">
+        <div style="background-color:white; 
+            position:absolute; 
+            width:300px; 
+            border: 4px black solid;
+            top: 50px;
+            left: 50px;
+            padding: 12px;">
+            <h1 style="font-size: 16px;">Draggle</h1>
+            <div style="position: relative;">
+                <div style="height:5px; 
+                    background-color:#ccc; 
+                    margin-top:10px;">
+                </div>
+                <div  id="enemyHealthBar" 
+                    style="height:5px; 
+                    background-color:green; 
+                    position: absolute; 
+                    top: 0; 
+                    left: 0; 
+                    right: 0;">
+                </div>
+            </div>
         </div>
-        <div style="display:flex; 
-        align-items:center; 
-        justify-content:center; 
-        width:33.33%;
-        border-left: 4px black solid;">
-            <h1 style="font-size: 16px;">Attack Type</h1>
+
+        <div style="background-color:white; 
+            position:absolute; 
+            width:300px; 
+            border: 4px black solid;
+            top: 330px;
+            right: 50px;
+            padding: 12px;">
+            <h1 style="font-size: 16px;">Emby</h1>
+            <div style="position: relative;">
+                <div style="height:5px; 
+                    background-color:#ccc; 
+                    margin-top:10px;">
+                </div>
+                <div id="myHealthBar"
+                    style="height:5px; 
+                    background-color:green; 
+                    position: absolute; 
+                    top: 0; 
+                    left: 0; 
+                    right: 0;">
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div style="background-color: white; 
+            position: absolute;
+            height: 140px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 4px black solid;
+            display: flex;">
+            <div id="dialogBox"
+                style="background-color:white;
+                position:absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                padding: 12px;
+                display: none;
+                cursor: pointer;">
+            </div>
+            <div
+                id="attacksBox" 
+                style="width: 66.66%; 
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);">
+            </div>
+            <div style="display:flex; 
+            align-items:center; 
+            justify-content:center; 
+            width:33.33%;
+            border-left: 4px black solid;">
+                <h1 id="attackType" style="font-size: 16px;">Tipologi di Attacco</h1>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" 
+integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" 
+crossorigin="anonymous" 
+referrerpolicy="no-referrer"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js" 
 integrity="sha512-GQ5/eIhs41UXpG6fGo4xQBpwSEj9RrBvMuKyE2h/2vw3a9x85T1Bt0JglOUVJJLeyIUl/S/kCdDXlE/n7zCjIg==" 
 crossorigin="anonymous" 
 referrerpolicy="no-referrer"></script>
 
+<script src="data/audio.js"></script>
 <script src="data/collisions.js"></script>
 <script src="data/battleZones.js"></script>
 <script src="data/attack.js"></script>
+<script src="data/monsters.js"></script>
 <script src="classes.js"></script>
 <script src="index.js"></script>
+<script src="battleScene.js"></script>

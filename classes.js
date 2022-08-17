@@ -1,18 +1,17 @@
 //generic sprite class
 class Sprite{
-    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, isEnemy = false, rotation = 0}){
+    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0}){
         this.position=position;
-        this.image = image;
+        this.image = new Image();
         this.frames = {...frames, val: 0, elapsed: 0};
         this.image.onload = () =>{
             this.width = this.image.width/this.frames.max;
             this.height = this.image.height;
         }
+        this.image.src = image.src;
         this.animate = animate;
         this.sprites = sprites;
         this.opacity = 1;
-        this.health = 100;
-        this.isEnemy = isEnemy;
         this.rotation = rotation;
     }
 
@@ -49,20 +48,45 @@ class Sprite{
                 this.frames.val = 0;
         }
     }
+}
+
+class Monster extends Sprite{
+    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, isEnemy = false, name, attacks}){
+        super({position, image, frames, sprites, animate, rotation})
+        this.isEnemy = isEnemy;
+        this.name=name;
+        this.health = 100;
+        this.attacks = attacks;
+    }
+
+    faint(){
+        document.querySelector('#dialogBox').innerHTML = this.name + ' ha esaurito le forze...';
+        audio.battle.stop();
+        gsap.to(this.position, {
+            y: this.position.y + 20
+        })
+        gsap.to(this, {
+            opacity: 0
+        })
+    }
 
     attack({attack, recipient, renderedSprites}){
 
+        document.querySelector('#dialogBox').style.display = 'block';
+        document.querySelector('#dialogBox').innerHTML = this.name + ' usa ' + attack.name;
+
         let healthBar = '#enemyHealthBar';
         if(this.isEnemy) healthBar = '#myHealthBar';
-        this.health -= attack.damage;
+        recipient.health -= attack.damage;
         let movementDistance = 20;
         if(this.isEnemy) movementDistance = -20;
         let rotation = 1
         if(this.isEnemy) rotation = -1;
 
-        switch(attack.name){
-            case 'Incendio':
+        switch(attack.type){
+            case 'Fuoco':
                 //create fireball
+                audio.initAttaccoFuoco.play();
                 const fireballImage = new Image();
                 fireballImage.src = './img/fireball.png';
                 const fireball = new Sprite({
@@ -87,8 +111,9 @@ class Sprite{
                         renderedSprites.splice(1, 1);
                         //hitting
                         gsap.to(healthBar,{
-                            width: this.health + '%'
+                            width: recipient.health + '%'
                         })
+                        audio.attaccoFuoco.play();
 
                         gsap.to(recipient.position,{
                             x: recipient.position.x + 10,
@@ -106,7 +131,8 @@ class Sprite{
                 })
             break;
 
-            case 'Attacco':
+            //attacco fisico
+            case 'Normale':
                 const tl = gsap.timeline()
                 tl.to(this.position, {
                     x: this.position.x - movementDistance
@@ -116,8 +142,9 @@ class Sprite{
                     onComplete: () => {
                         //hitting
                         gsap.to(healthBar,{
-                            width: this.health + '%'
+                            width: recipient.health + '%'
                         })
+                        audio.attaccoFisico.play();
 
                         gsap.to(recipient.position,{
                             x: recipient.position.x + 10,

@@ -136,6 +136,7 @@ const battle = {
 }
 
 //animation function
+let clicked = false;
 function animate(){
     const animationId = window.requestAnimationFrame(animate);
     background.draw();
@@ -167,9 +168,13 @@ function animate(){
             //try to go into a battle
             && Math.random() < 0.01
             ){
-                battle.initiated = true;
                 //deactivate current animation loop
                 window.cancelAnimationFrame(animationId);
+                audio.Map.stop();
+                audio.initBattle.play();
+                audio.battle.play();
+                battle.initiated = true;
+
                 gsap.to('#overlappingDiv', {
                     opacity: 1,
                     repeat: 3,
@@ -180,6 +185,7 @@ function animate(){
                         opacity: 1,
                         duration: 0.4,
                         onComplete(){
+                            initBattle();
                             animateBattle();
                             gsap.to('#overlappingDiv', {
                                 opacity: 0,
@@ -293,75 +299,6 @@ function animate(){
     }
 }
 
-//load enemy monster sprite
-const draggleImage = new Image();
-draggleImage.src = './img/draggleSprite.png';
-const draggle = new Sprite({
-    position:{
-        x: 800,
-        y: 100
-    },
-    image: draggleImage,
-    frames:{
-        max: 4,
-        hold: 30
-    },
-    animate: true,
-    isEnemy: true
-})
-
-//load my monster sprite
-const embySprite = new Image();
-embySprite.src = './img/embySprite.png';
-const emby = new Sprite({
-    position:{
-        x: 280,
-        y: 325
-    },
-    image: embySprite,
-    frames:{
-        max: 4,
-        hold: 30
-    },
-    animate: true,
-})
-
-//load battle background image
-const battleBackgroundImage = new Image();
-battleBackgroundImage.src = './img/battleBackground.png';
-const battleBackground = new Sprite({
-    position:{
-        x: 0,
-        y: 0
-    },
-    image: battleBackgroundImage
-})
-
-//animate battle
-const renderedSprites = [draggle, emby];
-function animateBattle(){
-    window.requestAnimationFrame(animateBattle);
-    battleBackground.draw();
-
-    renderedSprites.forEach((sprite) =>{
-        sprite.draw();
-    })
-}
-//animate();
-animateBattle();
-
-
-document.querySelectorAll('button').forEach(button =>{
-    button.addEventListener('click', (e) =>{
-        const selectedAttack = attacks[e.currentTarget.innerHTML]
-        emby.attack({
-            attack: selectedAttack,
-            recipient: draggle,
-            renderedSprites
-        })
-    })
-});
-
 //events for pressing movement keys
 let lastKey = '';
 window.addEventListener('keydown', (e) =>{
@@ -400,5 +337,17 @@ window.addEventListener('keyup', (e) =>{
         case 'd':
             keys.d.pressed = false;
             break;
+    }
+})
+
+animate();
+
+addEventListener('click', () =>{
+    if(!clicked){
+        audio.Map.play();
+        clicked = true;
+    }else{
+        audio.Map.stop();
+        clicked = false;
     }
 })
