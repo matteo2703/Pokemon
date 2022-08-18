@@ -10,7 +10,7 @@ const ditto = new Monster(monsters.Ditto);
 const bulbasaur = new Monster(monsters.Bulbasaur);
 const squirtle = new Monster(monsters.Squirtle);
 const charmander = new Monster(monsters.Charmander);
-const enemies = [bulbasaur];
+const enemies = [ditto,bulbasaur,squirtle,charmander];
 
 //load battle background image
 const battleBackgroundImage = new Image();
