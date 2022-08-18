@@ -5,17 +5,29 @@ const attacks = {
         type: 'Normale',
         color: 'black'
     },
+    Calcio:{
+        name: 'Calcio',
+        damage: 15,
+        type: 'Normale',
+        color: 'black'
+    },
+    Pugno:{
+        name: 'Pugno',
+        damage: 10,
+        type: 'Normale',
+        color: 'black'
+    },
+    Morso:{
+        name: 'Morso',
+        damage: 10,
+        type: 'Normale',
+        color: 'black'
+    },
     Incendio:{
         name: 'Incendio',
         damage: 15,
         type: 'Fuoco',
         color: 'red'
-    },
-    Calcio:{
-        name: 'Calcio',
-        damage: 10,
-        type: 'Normale',
-        color: 'black'
     },
     Scossa:{
         name: 'Scossa',

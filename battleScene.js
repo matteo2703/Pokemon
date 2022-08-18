@@ -10,7 +10,7 @@ const ditto = new Monster(monsters.Ditto);
 const bulbasaur = new Monster(monsters.Bulbasaur);
 const squirtle = new Monster(monsters.Squirtle);
 const charmander = new Monster(monsters.Charmander);
-const enemies = [ditto, bulbasaur,squirtle,charmander];
+const enemies = [bulbasaur];
 
 //load battle background image
 const battleBackgroundImage = new Image();
@@ -42,16 +42,34 @@ function initBattle(myMonsters, fightEnemy){
 
     document.querySelector('#enemyName').innerHTML = enemy.name;
     document.querySelector('#myMonsterName').innerHTML = myMonsters[myMonster].name;
+    document.querySelector('#myMonsterLevel').innerHTML = 'Liv. ' + myMonsters[myMonster].level;
     document.querySelector('#battleUserInterface').style.display = 'block';
     document.querySelector('#dialogBox').style.display = 'none';
     document.querySelector('#enemyHealthBar').style.width = '100%';
+    document.querySelector('#enemyLevel').innerHTML = 'Liv. ' + enemy.level;
     document.querySelector('#myHealthBar').style.width = (myMonsters[myMonster].health / myMonsters[myMonster].baseHealth * 100) + '%';
     document.querySelector('#attacksBox').replaceChildren();
+    document.querySelector('#expBar').style.width = (myMonsters[myMonster].exp / myMonsters[myMonster].requiredExp * 100) + '%';
     
     renderedSprites = [enemy, myMonsters[myMonster]];
     queue = [];
 
-    myMonsters[myMonster].attacks.forEach(attack =>{
+    //display max 4 attacks based on the level (the 4 best attacks)
+    let attacksToDisplay = [];
+    for(let i=0; i<myMonsters[myMonster].attacks.length;i++){
+        if(myMonsters[myMonster].attacksFromLevel[i] > myMonsters[myMonster].level || i == myMonsters[myMonster].attacks.length - 1){
+            if(i == myMonsters[myMonster].attacks.length - 1 && myMonsters[myMonster].attacksFromLevel[i] <= myMonsters[myMonster].level)
+                i++;
+            for(let j=i-1, k=4; j>=0; j--, k--){
+                if(k>0){
+                    attacksToDisplay.push(myMonsters[myMonster].attacks[j]);
+                }
+            }
+            break;
+        }
+    }
+    attacksToDisplay.reverse();
+    attacksToDisplay.forEach(attack =>{
         const button = document.createElement('button');
         button.innerHTML = attack.name;
         document.querySelector('#attacksBox').append(button);
@@ -68,7 +86,18 @@ function initBattle(myMonsters, fightEnemy){
     
             if(enemy.health <= 0){
                 queue.push(() =>{
-                    enemy.faint();
+                    enemy.faint(myMonsters[myMonster]);
+                    //level up
+                    if(myMonsters[myMonster].exp >= myMonsters[myMonster].requiredExp){
+                        myMonsters[myMonster].exp -= myMonsters[myMonster].requiredExp;
+                        myMonsters[myMonster].level++;
+                        myMonsters[myMonster].setBaseHealth();
+                        myMonsters[myMonster].health += 5;
+                        document.querySelector('#myMonsterLevel').innerHTML = 'Liv. ' + myMonsters[myMonster].level;
+                        document.querySelector('#myHealthBar').style.width = (myMonsters[myMonster].health / myMonsters[myMonster].baseHealth * 100) + '%';
+                    }
+                        
+                    document.querySelector('#expBar').style.width = (myMonsters[myMonster].exp / myMonsters[myMonster].requiredExp * 100) + '%';
                 })
                 //audio.vittoria.play();
                 queue.push(() =>{
@@ -89,7 +118,20 @@ function initBattle(myMonsters, fightEnemy){
             }
     
             //random enemy attack
-            const randomAttack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
+            let enemyAttacks = [];
+            for(let i=0; i<enemy.attacks.length;i++){
+                if(enemy.attacksFromLevel[i] > enemy.level || i == enemy.attacks.length - 1){
+                    if(i == enemy.attacks.length - 1 && enemy.attacksFromLevel[i] <= enemy.level)
+                        i++;
+                    for(let j=i-1, k=4; j>=0; j--, k--){
+                        if(k>0){
+                            enemyAttacks.push(enemy.attacks[j]);
+                        }
+                    }
+                    break;
+                }
+            }
+            const randomAttack = enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
             queue.push(() => {
                 enemy.attack({
                     attack: randomAttack,
@@ -98,7 +140,8 @@ function initBattle(myMonsters, fightEnemy){
                 })
                 if(myMonsters[myMonster].health <= 0){
                     queue.push(() =>{
-                        myMonsters[myMonster].faint();
+                        myMonsters[myMonster].faint(enemy);
+                        resetDeadEnemy();
                     })
                     queue.push(() =>{
                         gsap.to('#overlappingDiv', {

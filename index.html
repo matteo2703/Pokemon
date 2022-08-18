@@ -43,7 +43,14 @@
             top: 50px;
             left: 50px;
             padding: 12px;">
-            <h1 id="enemyName" style="font-size: 16px;"></h1>
+            <div style="display: flex; flex-direction: row;">
+                <div style="width: 60%;">
+                    <h1 id="enemyName" style="font-size: 16px; text-align: left;"></h1>
+                </div>
+                <div style="width: 40%;">
+                    <h1 id="enemyLevel" style="font-size: 16px; text-align: right;"></h1>
+                </div>
+            </div>
             <div style="position: relative;">
                 <div style="height:5px; 
                     background-color:#ccc; 
@@ -67,7 +74,14 @@
             top: 330px;
             right: 50px;
             padding: 12px;">
-            <h1 id="myMonsterName" style="font-size: 16px;"></h1>
+            <div style="display: flex; flex-direction: row;">
+                <div style="width: 60%;">
+                    <h1 id="myMonsterName" style="font-size: 16px; text-align: left;"></h1>
+                </div>
+                <div style="width: 40%;">
+                    <h1 id="myMonsterLevel" style="font-size: 16px; text-align: right;"></h1>
+                </div>
+            </div>
             <div style="position: relative;">
                 <div style="height:5px; 
                     background-color:#ccc; 
@@ -76,6 +90,20 @@
                 <div id="myHealthBar"
                     style="height:5px; 
                     background-color:green; 
+                    position: absolute; 
+                    top: 0; 
+                    left: 0; 
+                    right: 0;">
+                </div>
+            </div>
+            <div style="position: relative;">
+                <div style="height:5px; 
+                    background-color:#ccc; 
+                    margin-top:10px;">
+                </div>
+                <div id="expBar"
+                    style="height:5px; 
+                    background-color:blue; 
                     position: absolute; 
                     top: 0; 
                     left: 0; 

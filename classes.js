@@ -60,7 +60,8 @@ class Player extends Sprite{
 
 class Monster extends Sprite{
     constructor({image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, 
-        isEnemy = false, name, attacks, baseHealth, level = 1, exp = 0, type, weak, strong}){
+        isEnemy = false, name, attacks, attacksFromLevel, baseHealth, level = 1, exp = 0, 
+        type, weak, strong, evolutionLevel = -1}){
         super({image, frames, sprites, animate, rotation})
         this.positionFront = {
             x: 800,
@@ -75,11 +76,19 @@ class Monster extends Sprite{
         this.baseHealth = baseHealth + 3 * level;
         this.health = this.baseHealth;
         this.attacks = attacks;
+        this.attacksFromLevel = attacksFromLevel;
         this.level = level;
+        this.evolutionLevel = evolutionLevel;
         this.exp = exp;
+        this.requiredExp = (this.level+1) ^ 3 - this.level ^ 3;
+        this.releaseExp = this.level ^ 3;
         this.type = type;
         this.weak = weak;
         this.strong = strong;
+    }
+
+    setBaseHealth(){
+        this.baseHealth = this.baseHealth + 3 * this.level;
     }
 
     setPosition(){
@@ -133,7 +142,7 @@ class Monster extends Sprite{
         }
     }
 
-    faint(){
+    faint(recipient){
         document.querySelector('#dialogBox').innerHTML = this.name + ' ha esaurito le forze...';
         //audio.battle.stop();
         gsap.to(this.position, {
@@ -145,6 +154,10 @@ class Monster extends Sprite{
         gsap.to(this.position,{
             y: this.position.y
         })
+
+        if(this.isEnemy){
+           recipient.exp += this.releaseExp;
+        }
     }
 
     attack({attack, recipient, renderedSprites}){
