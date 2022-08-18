@@ -1,11 +1,11 @@
 //generic sprite class
 class Sprite{
     constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0}){
-        this.position=position;
+        this.position = position;
         this.image = new Image();
         this.frames = {...frames, val: 0, elapsed: 0};
         this.image.onload = () =>{
-            this.width = this.image.width/this.frames.max;
+            this.width = this.image.width / this.frames.max;
             this.height = this.image.height;
         }
         this.image.src = image.src;
@@ -50,23 +50,38 @@ class Sprite{
     }
 }
 
+class Player extends Sprite{
+    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, monsters}){
+        super({position, image, frames, sprites, animate, rotation})
+        this.monsters = monsters;
+    }
+    
+}
+
 class Monster extends Sprite{
-    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, isEnemy = false, name, attacks}){
+    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, 
+        isEnemy = false, name, attacks, baseHealth, level, exp}){
         super({position, image, frames, sprites, animate, rotation})
         this.isEnemy = isEnemy;
         this.name=name;
-        this.health = 100;
+        this.baseHealth = baseHealth + 3 * level;
+        this.health = this.baseHealth;
         this.attacks = attacks;
+        this.level = level;
+        this.exp = exp;
     }
 
     faint(){
         document.querySelector('#dialogBox').innerHTML = this.name + ' ha esaurito le forze...';
-        audio.battle.stop();
+        //audio.battle.stop();
         gsap.to(this.position, {
             y: this.position.y + 20
         })
         gsap.to(this, {
             opacity: 0
+        })
+        gsap.to(this.position,{
+            y: this.position.y
         })
     }
 
@@ -76,17 +91,22 @@ class Monster extends Sprite{
         document.querySelector('#dialogBox').innerHTML = this.name + ' usa ' + attack.name;
 
         let healthBar = '#enemyHealthBar';
-        if(this.isEnemy) healthBar = '#myHealthBar';
         recipient.health -= attack.damage;
+        let newHealth;
+        newHealth = (recipient.health / recipient.baseHealth * 100);
+        if(newHealth <= 0) newHealth = 0;
         let movementDistance = 20;
-        if(this.isEnemy) movementDistance = -20;
         let rotation = 1
-        if(this.isEnemy) rotation = -1;
+        if(this.isEnemy) {
+            healthBar = '#myHealthBar';
+            movementDistance = -20;
+            rotation = -1;
+        }
 
         switch(attack.type){
             case 'Fuoco':
                 //create fireball
-                audio.initAttaccoFuoco.play();
+                //audio.initAttaccoFuoco.play();
                 const fireballImage = new Image();
                 fireballImage.src = './img/fireball.png';
                 const fireball = new Sprite({
@@ -111,9 +131,150 @@ class Monster extends Sprite{
                         renderedSprites.splice(1, 1);
                         //hitting
                         gsap.to(healthBar,{
-                            width: recipient.health + '%'
+                            width: newHealth + '%'
                         })
-                        audio.attaccoFuoco.play();
+                        //audio.attaccoFuoco.play();
+
+                        gsap.to(recipient.position,{
+                            x: recipient.position.x + 10,
+                            yoyo: true,
+                            repeat: 5,
+                            duration: 0.08
+                        })
+                        gsap.to(recipient,{
+                            opacity: 0,
+                            repeat: 3,
+                            yoyo: true,
+                            duration: 0.08
+                        })
+                    }
+                })
+            break;
+
+            case 'Elettrico':
+                //create fireball
+                //audio.initAttaccoFuoco.play();
+                const scintillaImage = new Image();
+                scintillaImage.src = './img/fireball.png';
+                const scintilla = new Sprite({
+                    position:{
+                        x: this.position.x,
+                        y: this.position.y
+                    },
+                    image: scintillaImage,
+                    frames: {
+                        max: 4,
+                        hold: 10
+                    },
+                    animate: true,
+                    rotation: rotation,
+                })
+                renderedSprites.splice(1, 0, scintilla);
+
+                gsap.to(scintilla.position,{
+                    x: recipient.position.x,
+                    y: recipient.position.y,
+                    onComplete: () =>{                      
+                        renderedSprites.splice(1, 1);
+                        //hitting
+                        gsap.to(healthBar,{
+                            width: newHealth + '%'
+                        })
+                        //audio.attaccoFuoco.play();
+
+                        gsap.to(recipient.position,{
+                            x: recipient.position.x + 10,
+                            yoyo: true,
+                            repeat: 5,
+                            duration: 0.08
+                        })
+                        gsap.to(recipient,{
+                            opacity: 0,
+                            repeat: 3,
+                            yoyo: true,
+                            duration: 0.08
+                        })
+                    }
+                })
+            break;
+
+            case 'Acqua':
+                //create fireball
+                //audio.initAttaccoFuoco.play();
+                const bollaImage = new Image();
+                bollaImage.src = './img/fireball.png';
+                const bolla = new Sprite({
+                    position:{
+                        x: this.position.x,
+                        y: this.position.y
+                    },
+                    image: bollaImage,
+                    frames: {
+                        max: 4,
+                        hold: 10
+                    },
+                    animate: true,
+                    rotation: rotation,
+                })
+                renderedSprites.splice(1, 0, bolla);
+
+                gsap.to(bolla.position,{
+                    x: recipient.position.x,
+                    y: recipient.position.y,
+                    onComplete: () =>{                      
+                        renderedSprites.splice(1, 1);
+                        //hitting
+                        gsap.to(healthBar,{
+                            width: newHealth + '%'
+                        })
+                        //audio.attaccoFuoco.play();
+
+                        gsap.to(recipient.position,{
+                            x: recipient.position.x + 10,
+                            yoyo: true,
+                            repeat: 5,
+                            duration: 0.08
+                        })
+                        gsap.to(recipient,{
+                            opacity: 0,
+                            repeat: 3,
+                            yoyo: true,
+                            duration: 0.08
+                        })
+                    }
+                })
+            break;
+
+            case 'Erba':
+                //create fireball
+                //audio.initAttaccoFuoco.play();
+                const lianaImage = new Image();
+                lianaImage.src = './img/fireball.png';
+                const liana = new Sprite({
+                    position:{
+                        x: this.position.x,
+                        y: this.position.y
+                    },
+                    image: lianaImage,
+                    frames: {
+                        max: 4,
+                        hold: 10
+                    },
+                    animate: true,
+                    rotation: rotation,
+                })
+                renderedSprites.splice(1, 0, liana);
+
+                gsap.to(liana.position,{
+                    x: recipient.position.x,
+                    y: recipient.position.y,
+                    onComplete: () =>{                      
+                        renderedSprites.splice(1, 1);
+                        //hitting
+                        gsap.to(healthBar,{
+                            width: newHealth + '%'
+                        })
+                        //audio.attaccoFuoco.play();
 
                         gsap.to(recipient.position,{
                             x: recipient.position.x + 10,
@@ -142,9 +303,9 @@ class Monster extends Sprite{
                     onComplete: () => {
                         //hitting
                         gsap.to(healthBar,{
-                            width: recipient.health + '%'
+                            width: newHealth + '%'
                         })
-                        audio.attaccoFisico.play();
+                        //audio.attaccoFisico.play();
 
                         gsap.to(recipient.position,{
                             x: recipient.position.x + 10,
@@ -172,14 +333,15 @@ class Boundary{
 
     static width = 48;
     static height = 48;
-    constructor({position}){
+    constructor({position, color}){
         this.position = position;
         this.width = 48;
         this.height = 48;
+        this.color = color;
     }
 
     draw(){
-        c.fillStyle = 'rgba(255, 0, 0, 0.0)';
+        c.fillStyle = this.color;
         c.fillRect(this.position.x, this.position.y, this.width, this.height);
     }
 }

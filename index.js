@@ -28,7 +28,8 @@ collisionsMap.forEach((row, i) => {
                 position:{
                     x: j*Boundary.width + offset.x,
                     y: i*Boundary.height + offset.y
-                }
+                },
+                color: 'rgba(255, 0, 0, 0)'
             }))
         }
     })
@@ -43,11 +44,17 @@ battleZonesMap.forEach((row, i) => {
                 position:{
                     x: j*Boundary.width + offset.x,
                     y: i*Boundary.height + offset.y
-                }
+                },
+                color: 'rgba(0, 255, 0, 0)'
             }))
         }
     })
 })
+
+let lastCheckPoint = {
+    x: offset.x,
+    y: offset.y
+}
 
 //image map
 const mapImage = new Image();
@@ -67,8 +74,14 @@ playerLeftImage.src = './img/playerLeft.png';
 const playerRightImage = new Image();
 playerRightImage.src = './img/playerRight.png';
 
+//create my monsters
+const emby = new Monster(monsters.Emby);
+const leafy = new Monster(monsters.Leafy);
+const bubbly = new Monster(monsters.Bubbly);
+const scinty = new Monster(monsters.Scinty);
+
 //player object
-const player = new Sprite({
+const player = new Player({
     position:{
         x: canvas.width/2 - (192/4)/2, 
         y: canvas.height/2 - 68/2,
@@ -83,7 +96,8 @@ const player = new Sprite({
         left: playerLeftImage,
         right: playerRightImage,
         down: playerDownImage
-    }
+    },
+    monsters: [emby,scinty,bubbly,leafy]
 })
 
 //background object
@@ -121,16 +135,6 @@ const keys = {
 
 const movables = [background, ...boundaries, foreground, ...battleZones]
 
-//function to determine collision from 2 rectangles
-function rectangularCollision({rectangle1, rectangle2}){
-    return(
-        rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
-        rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
-        rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&
-        rectangle1.position.y + rectangle1.height >= rectangle2.position.y
-    );
-}
-
 const battle = {
     initiated: false
 }
@@ -138,6 +142,7 @@ const battle = {
 //animation function
 let clicked = false;
 function animate(){
+
     const animationId = window.requestAnimationFrame(animate);
     background.draw();
     boundaries.forEach(boundary =>{
@@ -147,7 +152,7 @@ function animate(){
         battleZone.draw();
     })
     player.draw();  
-    foreground.draw();  
+    foreground.draw(); 
 
     let moving = true;
     player.animate = false;
@@ -166,15 +171,16 @@ function animate(){
             })
             && overlappingArea > player.width * player.height /2
             //try to go into a battle
-            && Math.random() < 0.01
+            && Math.random() < 0.02
             ){
                 //deactivate current animation loop
                 window.cancelAnimationFrame(animationId);
-                audio.Map.stop();
-                audio.initBattle.play();
-                audio.battle.play();
+                //audio.Map.stop();
+                //audio.initBattle.play();
+                //audio.battle.play();
                 battle.initiated = true;
 
+                //enter battle animation
                 gsap.to('#overlappingDiv', {
                     opacity: 1,
                     repeat: 3,
@@ -185,7 +191,11 @@ function animate(){
                         opacity: 1,
                         duration: 0.4,
                         onComplete(){
-                            initBattle();
+                            myPosition={
+                                x: background.position.x,
+                                y: background.position.y,
+                            }
+                            initBattle(player.monsters, movables, myPosition);
                             animateBattle();
                             gsap.to('#overlappingDiv', {
                                 opacity: 0,
@@ -340,14 +350,15 @@ window.addEventListener('keyup', (e) =>{
     }
 })
 
-animate();
-
+//switch audio map on/off
 addEventListener('click', () =>{
     if(!clicked){
-        audio.Map.play();
+        //audio.Map.play();
         clicked = true;
     }else{
-        audio.Map.stop();
+        //audio.Map.stop();
         clicked = false;
     }
 })
+
+animate();

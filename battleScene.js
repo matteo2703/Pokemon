@@ -1,7 +1,5 @@
 //load enemy monster sprite
 let draggle;
-//load my monster
-let emby;
 //sprites to load
 let renderedSprites;
 //queue of actions
@@ -19,20 +17,32 @@ const battleBackground = new Sprite({
     image: battleBackgroundImage
 })
 
+function selectActiveMonster(myMonsters){
+    for(let i=0; i < myMonsters.length; i++){
+        if(myMonsters[i].health > 0)
+            return i;
+    }
+    return 0;
+}
+
 //initialize components
-function initBattle(){
+function initBattle(myMonsters, movables, myPosition){
+
+    let myMonster = selectActiveMonster(myMonsters);
+    draggle = new Monster(monsters.Draggle);
+
+    document.querySelector('#enemyName').innerHTML = draggle.name;
+    document.querySelector('#myMonsterName').innerHTML = myMonsters[myMonster].name;
     document.querySelector('#battleUserInterface').style.display = 'block';
     document.querySelector('#dialogBox').style.display = 'none';
     document.querySelector('#enemyHealthBar').style.width = '100%';
-    document.querySelector('#myHealthBar').style.width = '100%';
+    document.querySelector('#myHealthBar').style.width = (myMonsters[myMonster].health / myMonsters[myMonster].baseHealth * 100) + '%';
     document.querySelector('#attacksBox').replaceChildren();
     
-    draggle = new Monster(monsters.Draggle);
-    emby = new Monster(monsters.Emby);
-    renderedSprites = [draggle, emby];
+    renderedSprites = [draggle, myMonsters[myMonster]];
     queue = [];
 
-    emby.attacks.forEach(attack =>{
+    myMonsters[myMonster].attacks.forEach(attack =>{
         const button = document.createElement('button');
         button.innerHTML = attack.name;
         document.querySelector('#attacksBox').append(button);
@@ -41,7 +51,7 @@ function initBattle(){
     document.querySelectorAll('button').forEach(button =>{
         button.addEventListener('click', (e) =>{
             const selectedAttack = attacks[e.currentTarget.innerHTML];
-            emby.attack({
+            myMonsters[myMonster].attack({
                 attack: selectedAttack,
                 recipient: draggle,
                 renderedSprites
@@ -51,7 +61,7 @@ function initBattle(){
                 queue.push(() =>{
                     draggle.faint();
                 })
-                audio.vittoria.play();
+                //audio.vittoria.play();
                 queue.push(() =>{
                     gsap.to('#overlappingDiv', {
                         opacity: 1,
@@ -73,12 +83,12 @@ function initBattle(){
             queue.push(() => {
                 draggle.attack({
                     attack: randomAttack,
-                    recipient: emby,
+                    recipient: myMonsters[myMonster],
                     renderedSprites
                 })
-                if(emby.health <= 0){
+                if(myMonsters[myMonster].health <= 0){
                     queue.push(() =>{
-                        emby.faint();
+                        myMonsters[myMonster].faint();
                     })
                     queue.push(() =>{
                         gsap.to('#overlappingDiv', {
@@ -91,6 +101,8 @@ function initBattle(){
                                     opacity: 0
                                 })
                                 battle.initiated = false;
+                                if(myMonster == myMonsters.length - 1)
+                                    reset();
                             }
                         })
                     })
@@ -129,3 +141,21 @@ document.querySelector('#dialogBox').addEventListener('click', (e) =>{
     }else
         e.currentTarget.style.display = 'none';
 })
+
+function reset(){
+    movement ={
+        x: lastCheckPoint.x - myPosition.x,
+        y: lastCheckPoint.y- myPosition.y
+    }
+    player.image = player.sprites.down;
+    player.frames.val = 0;
+    movables.forEach(movable =>{
+        movable.position.x += movement.x;
+        movable.position.y += movement.y;
+    })
+    player.monsters.forEach(monster =>{
+        monster.health = monster.baseHealth;
+        monster.frames.val = 0;
+        monster.opacity = 1;
+    })
+}
