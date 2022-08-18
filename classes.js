@@ -60,7 +60,7 @@ class Player extends Sprite{
 
 class Monster extends Sprite{
     constructor({image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, 
-        isEnemy = false, name, attacks, baseHealth, level = 1, exp = 0}){
+        isEnemy = false, name, attacks, baseHealth, level = 1, exp = 0, type, weak, strong}){
         super({image, frames, sprites, animate, rotation})
         this.positionFront = {
             x: 800,
@@ -77,6 +77,9 @@ class Monster extends Sprite{
         this.attacks = attacks;
         this.level = level;
         this.exp = exp;
+        this.type = type;
+        this.weak = weak;
+        this.strong = strong;
     }
 
     setPosition(){
@@ -150,7 +153,14 @@ class Monster extends Sprite{
         document.querySelector('#dialogBox').innerHTML = this.name + ' usa ' + attack.name;
 
         let healthBar = '#enemyHealthBar';
-        recipient.health -= attack.damage;
+        let damage;
+        if(attack.type == recipient.weak)
+            damage = attack.damage * 2;
+        else if(attack.type == recipient.strong)
+            damage = attack.damage / 2;
+        else
+            damage = attack.damage;
+        recipient.health -= damage;
         let newHealth;
         newHealth = (recipient.health / recipient.baseHealth * 100);
         if(newHealth <= 0) newHealth = 0;

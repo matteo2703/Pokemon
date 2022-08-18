@@ -8,7 +8,9 @@ let enemy;
 //adding enemies
 const ditto = new Monster(monsters.Ditto);
 const bulbasaur = new Monster(monsters.Bulbasaur);
-const enemies = [bulbasaur];
+const squirtle = new Monster(monsters.Squirtle);
+const charmander = new Monster(monsters.Charmander);
+const enemies = [ditto, bulbasaur,squirtle,charmander];
 
 //load battle background image
 const battleBackgroundImage = new Image();
@@ -80,6 +82,7 @@ function initBattle(myMonsters, fightEnemy){
                                 opacity: 0
                             })
                             battle.initiated = false;
+                            resetDeadEnemy();
                         }
                     })
                 })
@@ -148,6 +151,12 @@ document.querySelector('#dialogBox').addEventListener('click', (e) =>{
     }else
         e.currentTarget.style.display = 'none';
 })
+
+function resetDeadEnemy(){
+    enemy.health = enemy.baseHealth;
+    enemy.frames.val = 0;
+    enemy.opacity = 1;
+}
 
 function reset(){
     movement ={

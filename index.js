@@ -75,7 +75,7 @@ const playerRightImage = new Image();
 playerRightImage.src = './img/playerRight.png';
 
 //create my monsters
-const myDitto = new Monster(monsters.Ditto);
+const myDitto = new Monster(monsters.Charmander);
 
 //player object
 const player = new Player({
