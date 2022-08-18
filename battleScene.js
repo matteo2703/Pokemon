@@ -1,10 +1,14 @@
-//load enemy monster sprite
-let draggle;
 //sprites to load
 let renderedSprites;
 //queue of actions
 let queue;
+//set enemy
+let enemy;
 
+//adding enemies
+const ditto = new Monster(monsters.Ditto);
+const bulbasaur = new Monster(monsters.Bulbasaur);
+const enemies = [bulbasaur];
 
 //load battle background image
 const battleBackgroundImage = new Image();
@@ -26,12 +30,15 @@ function selectActiveMonster(myMonsters){
 }
 
 //initialize components
-function initBattle(myMonsters, movables, myPosition){
+function initBattle(myMonsters, fightEnemy){
 
     let myMonster = selectActiveMonster(myMonsters);
-    draggle = new Monster(monsters.Draggle);
+    enemy = enemies[fightEnemy];
+    enemy.isEnemy = true;
+    enemy.setPosition();
+    myMonsters[myMonster].setPosition();
 
-    document.querySelector('#enemyName').innerHTML = draggle.name;
+    document.querySelector('#enemyName').innerHTML = enemy.name;
     document.querySelector('#myMonsterName').innerHTML = myMonsters[myMonster].name;
     document.querySelector('#battleUserInterface').style.display = 'block';
     document.querySelector('#dialogBox').style.display = 'none';
@@ -39,7 +46,7 @@ function initBattle(myMonsters, movables, myPosition){
     document.querySelector('#myHealthBar').style.width = (myMonsters[myMonster].health / myMonsters[myMonster].baseHealth * 100) + '%';
     document.querySelector('#attacksBox').replaceChildren();
     
-    renderedSprites = [draggle, myMonsters[myMonster]];
+    renderedSprites = [enemy, myMonsters[myMonster]];
     queue = [];
 
     myMonsters[myMonster].attacks.forEach(attack =>{
@@ -53,13 +60,13 @@ function initBattle(myMonsters, movables, myPosition){
             const selectedAttack = attacks[e.currentTarget.innerHTML];
             myMonsters[myMonster].attack({
                 attack: selectedAttack,
-                recipient: draggle,
+                recipient: enemy,
                 renderedSprites
             })
     
-            if(draggle.health <= 0){
+            if(enemy.health <= 0){
                 queue.push(() =>{
-                    draggle.faint();
+                    enemy.faint();
                 })
                 //audio.vittoria.play();
                 queue.push(() =>{
@@ -79,9 +86,9 @@ function initBattle(myMonsters, movables, myPosition){
             }
     
             //random enemy attack
-            const randomAttack = draggle.attacks[Math.floor(Math.random() * draggle.attacks.length)];
+            const randomAttack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
             queue.push(() => {
-                draggle.attack({
+                enemy.attack({
                     attack: randomAttack,
                     recipient: myMonsters[myMonster],
                     renderedSprites

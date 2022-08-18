@@ -1,7 +1,6 @@
 //generic sprite class
 class Sprite{
     constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0}){
-        this.position = position;
         this.image = new Image();
         this.frames = {...frames, val: 0, elapsed: 0};
         this.image.onload = () =>{
@@ -13,6 +12,7 @@ class Sprite{
         this.sprites = sprites;
         this.opacity = 1;
         this.rotation = rotation;
+        this.position = position;
     }
 
     draw(){
@@ -47,21 +47,29 @@ class Sprite{
             else
                 this.frames.val = 0;
         }
-    }
+    }   
 }
 
 class Player extends Sprite{
     constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, monsters}){
-        super({position, image, frames, sprites, animate, rotation})
+        super({image, frames, sprites, animate, rotation})
         this.monsters = monsters;
-    }
-    
+        this.position = position;
+    } 
 }
 
 class Monster extends Sprite{
-    constructor({position, image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, 
-        isEnemy = false, name, attacks, baseHealth, level, exp}){
-        super({position, image, frames, sprites, animate, rotation})
+    constructor({image, frames = {max: 1, hold: 10}, sprites, animate = false, rotation = 0, 
+        isEnemy = false, name, attacks, baseHealth, level = 1, exp = 0}){
+        super({image, frames, sprites, animate, rotation})
+        this.positionFront = {
+            x: 800,
+            y: 100
+        }
+        this.positionBack = {
+            x: 300,
+            y: 320
+        }
         this.isEnemy = isEnemy;
         this.name=name;
         this.baseHealth = baseHealth + 3 * level;
@@ -69,6 +77,57 @@ class Monster extends Sprite{
         this.attacks = attacks;
         this.level = level;
         this.exp = exp;
+    }
+
+    setPosition(){
+        if(this.isEnemy){
+            this.position = {
+                x: this.positionFront.x,
+                y: this.positionFront.y
+            }
+            this.image.src = this.sprites.front;
+        }
+        else{
+            this.position = {
+                x: this.positionBack.x,
+                y: this.positionBack.y
+            }
+            this.image.src = this.sprites.back;
+        }
+    }
+
+    draw(){
+        c.save();
+        c.translate(this.position.x + this.width / 2, this.position.y + this.height / 2);
+        c.rotate(this.rotation);
+        c.translate(-this.position.x - this.width / 2, -this.position.y - this.height / 2);
+        c.globalAlpha = this.opacity;
+        c.drawImage(
+            this.image,
+            this.frames.val * this.width,
+            0,
+            this.image.width / this.frames.max,
+            this.image.height, 
+            this.position.x,
+            this.position.y,
+            this.image.width / this.frames.max * 3,
+            this.image.height * 3
+        );
+        c.restore();
+
+        if(!this.animate) 
+            return;
+
+        if(this.frames.max > 1){
+            this.frames.elapsed++;
+        }
+
+        if(this.frames.elapsed % this.frames.hold === 0){
+            if(this.frames.val < this.frames.max - 1)
+                this.frames.val++;
+            else
+                this.frames.val = 0;
+        }
     }
 
     faint(){

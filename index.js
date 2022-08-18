@@ -75,10 +75,7 @@ const playerRightImage = new Image();
 playerRightImage.src = './img/playerRight.png';
 
 //create my monsters
-const emby = new Monster(monsters.Emby);
-const leafy = new Monster(monsters.Leafy);
-const bubbly = new Monster(monsters.Bubbly);
-const scinty = new Monster(monsters.Scinty);
+const myDitto = new Monster(monsters.Ditto);
 
 //player object
 const player = new Player({
@@ -97,7 +94,7 @@ const player = new Player({
         right: playerRightImage,
         down: playerDownImage
     },
-    monsters: [emby,scinty,bubbly,leafy]
+    monsters: [myDitto]
 })
 
 //background object
@@ -195,7 +192,8 @@ function animate(){
                                 x: background.position.x,
                                 y: background.position.y,
                             }
-                            initBattle(player.monsters, movables, myPosition);
+                            randomEnemy = Math.floor(Math.random() * enemies.length);
+                            initBattle(player.monsters, randomEnemy);
                             animateBattle();
                             gsap.to('#overlappingDiv', {
                                 opacity: 0,
