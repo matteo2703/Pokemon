@@ -6,22 +6,7 @@ let queue;
 let enemy;
 
 //adding enemies
-const ditto = new Monster(monsters.Ditto);
-const bulbasaur = new Monster(monsters.Bulbasaur);
-const squirtle = new Monster(monsters.Squirtle);
-const charmander = new Monster(monsters.Charmander);
 const enemies = [ditto,bulbasaur,squirtle,charmander];
-
-//load battle background image
-const battleBackgroundImage = new Image();
-battleBackgroundImage.src = './img/battleBackground.png';
-const battleBackground = new Sprite({
-    position:{
-        x: 0,
-        y: 0
-    },
-    image: battleBackgroundImage
-})
 
 function selectActiveMonster(myMonsters){
     for(let i=0; i < myMonsters.length; i++){
@@ -37,8 +22,8 @@ function initBattle(myMonsters, fightEnemy){
     let myMonster = selectActiveMonster(myMonsters);
     enemy = enemies[fightEnemy];
     enemy.isEnemy = true;
-    enemy.setPosition();
-    myMonsters[myMonster].setPosition();
+    enemy.setBattlePosition();
+    myMonsters[myMonster].setBattlePosition();
 
     document.querySelector('#enemyName').innerHTML = enemy.name;
     document.querySelector('#myMonsterName').innerHTML = myMonsters[myMonster].name;
@@ -50,6 +35,7 @@ function initBattle(myMonsters, fightEnemy){
     document.querySelector('#myHealthBar').style.width = (myMonsters[myMonster].health / myMonsters[myMonster].baseHealth * 100) + '%';
     document.querySelector('#attacksBox').replaceChildren();
     document.querySelector('#expBar').style.width = (myMonsters[myMonster].exp / myMonsters[myMonster].requiredExp * 100) + '%';
+    console.log((myMonsters[myMonster].exp / myMonsters[myMonster].requiredExp * 100) + '%')
     
     renderedSprites = [enemy, myMonsters[myMonster]];
     queue = [];
@@ -95,6 +81,8 @@ function initBattle(myMonsters, fightEnemy){
                         myMonsters[myMonster].health += 5;
                         document.querySelector('#myMonsterLevel').innerHTML = 'Liv. ' + myMonsters[myMonster].level;
                         document.querySelector('#myHealthBar').style.width = (myMonsters[myMonster].health / myMonsters[myMonster].baseHealth * 100) + '%';
+                        if(myMonsters[myMonster].level == myMonsters[myMonster].evolutionLevel)
+                            evolve(myMonsters[myMonster],myMonster, monsterDatabase[evolution(myMonsters[myMonster])]);
                     }
                         
                     document.querySelector('#expBar').style.width = (myMonsters[myMonster].exp / myMonsters[myMonster].requiredExp * 100) + '%';
@@ -217,4 +205,15 @@ function reset(){
         monster.frames.val = 0;
         monster.opacity = 1;
     })
+}
+
+function evolve(startMonster, startMonsterPosition, evolvedMonster){
+
+    evolvedMonster.level = startMonster.level;
+    evolvedMonster.exp = startMonster.exp;
+    evolvedMonster.requiredExp = (evolvedMonster.level+1) ^ 3 - evolvedMonster.level ^ 3;
+    evolvedMonster.baseHealth = startMonster.baseHealth + 3 * evolvedMonster.level;
+    evolvedMonster.health = startMonster.health;
+
+    player.monsters[startMonsterPosition] = evolvedMonster;
 }

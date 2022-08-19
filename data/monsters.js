@@ -13,12 +13,13 @@ const monsters = {
         },
         animate: true,
         name: 'Ditto',
-        attacks: [attacks.Attacco,attacks.Pugno,attacks.Morso,attacks.Calcio,],
-        attacksFromLevel: [1,1,3,5],
+        attacks: [attacks.Attacco,attacks.Pugno,attacks.Morso,attacks.Calcio],
+        attacksFromLevel: [1,2,3,5],
         baseHealth: 25,
         type: 'Normale',
-        strong: 'Normale',
-        weak: 'Normale',
+        strong: '',
+        weak: '',
+        id: 1,
 
     },
     Bulbasaur:{
@@ -42,6 +43,7 @@ const monsters = {
         type: 'Erba',
         strong: 'Acqua',
         weak: 'Fuoco',
+        id: 2,
     },
     Ivysaur:{
         image: {
@@ -57,13 +59,15 @@ const monsters = {
         },
         animate: true,
         name: 'Ivysaur',
-        attacks: [attacks.Frustata],
+        attacks: [attacks.Pugno,attacks.Attacco,attacks.Calcio,attacks.Frustata],
+        attacksFromLevel: [1,1,3,5],
         evolutionLevel: 50,
         baseHealth: 25,
         type: 'Erba',
         level: 20,
         strong: 'Acqua',
         weak: 'Fuoco',
+        id: 3,
     },
     Venusaur:{
         image: {
@@ -79,12 +83,14 @@ const monsters = {
         },
         animate: true,
         name: 'Venusaur',
-        attacks: [attacks.Frustata],
+        attacks: [attacks.Pugno,attacks.Attacco,attacks.Calcio,attacks.Frustata],
+        attacksFromLevel: [1,1,3,5],
         baseHealth: 25,
         type: 'Erba',
         level: 50,
         strong: 'Acqua',
         weak: 'Fuoco',
+        id: 4,
     },
     Squirtle:{
         image: {
@@ -107,6 +113,7 @@ const monsters = {
         type: 'Acqua',
         strong: 'Fuoco',
         weak: 'Erba',
+        id: 5,
     },
     Wartortle:{
         image: {
@@ -122,13 +129,15 @@ const monsters = {
         },
         animate: true,
         name: 'Wartortle',
-        attacks: [attacks.Spruzzo],
+        attacks: [attacks.Attacco,attacks.Pugno,attacks.Calcio,attacks.Spruzzo],
+        attacksFromLevel: [1,1,3,5],
         evolutionLevel: 50,
         baseHealth: 25,
         type: 'Acqua',
         level: 20,
         strong: 'Fuoco',
         weak: 'Erba',
+        id: 6,
     },
     Blastoise:{
         image: {
@@ -144,12 +153,14 @@ const monsters = {
         },
         animate: true,
         name: 'Blastoise',
-        attacks: [attacks.Spruzzo],
+        attacks: [attacks.Attacco,attacks.Pugno,attacks.Calcio,attacks.Spruzzo],
+        attacksFromLevel: [1,1,3,5],
         baseHealth: 25,
         type: 'Acqua',
         level: 50,
         strong: 'Fuoco',
         weak: 'Erba',
+        id: 7,
     },
     Charmander:{
         image: {
@@ -172,6 +183,7 @@ const monsters = {
         type: 'Fuoco',
         strong: 'Erba',
         weak: 'Acqua',
+        id: 8,
     },
     Charmeleon:{
         image: {
@@ -179,7 +191,7 @@ const monsters = {
         },
         sprites:{
             front: './img/pokemonFronte/charmeleonFronte.png',
-            back: './img/pokemonRetrocharmeleonRetro.png',
+            back: './img/pokemonRetro/charmeleonRetro.png',
         },
         frames:{
             max: 1,
@@ -187,13 +199,15 @@ const monsters = {
         },
         animate: true,
         name: 'Charmeleon',
-        attacks: [attacks.Incendio],
+        attacks: [attacks.Attacco,attacks.Pugno,attacks.Calcio,attacks.Incendio],
+        attacksFromLevel: [1,1,3,5],
         evolutionLevel: 50,
         baseHealth: 25,
         type: 'Fuoco',
         level: 20,
         strong: 'Erba',
         weak: 'Acqua',
+        id: 9,
     },
     Charizard:{
         image: {
@@ -209,12 +223,14 @@ const monsters = {
         },
         animate: true,
         name: 'Charizard',
-        attacks: [attacks.Incendio],
+        attacks: [attacks.Attacco,attacks.Pugno,attacks.Calcio,attacks.Incendio],
+        attacksFromLevel: [1,1,3,5],
         baseHealth: 25,
         type: 'Fuoco',
         level: 50,
         strong: 'Erba',
         weak: 'Acqua',
+        id: 10,
     },
     
 }
